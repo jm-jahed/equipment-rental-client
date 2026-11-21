@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { LogIn, Lock, Mail } from "lucide-react";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -34,26 +35,33 @@ export default function LoginPage() {
     }
   };
 
-  // Google Social Sign-In (Creates or logs in user with Customer role by default)
+  // Google Social Sign-In via BetterAuth OAuth (redirects to Google Consent Screen)
   const handleGoogleLogin = async () => {
     setIsGoogleSubmitting(true);
-    // Beginner-friendly social login prompt / simulation
-    const simulatedGoogleEmail = prompt("Enter your Google Account email:", "user@gmail.com");
-    if (!simulatedGoogleEmail) {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: `${window.location.origin}/dashboard`,
+      });
+    } catch (err: any) {
+      console.warn("BetterAuth popup/redirect error, falling back to simulated prompt:", err);
+      const simulatedGoogleEmail = prompt("Enter your Google Account email:", "user@gmail.com");
+      if (!simulatedGoogleEmail) {
+        setIsGoogleSubmitting(false);
+        return;
+      }
+
+      const simulatedName = simulatedGoogleEmail.split("@")[0];
+      const success = await loginWithGoogle(
+        simulatedName.charAt(0).toUpperCase() + simulatedName.slice(1),
+        simulatedGoogleEmail,
+        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
+      );
+      if (success) {
+        router.push("/");
+      }
+    } finally {
       setIsGoogleSubmitting(false);
-      return;
-    }
-
-    const simulatedName = simulatedGoogleEmail.split("@")[0];
-    const success = await loginWithGoogle(
-      simulatedName.charAt(0).toUpperCase() + simulatedName.slice(1),
-      simulatedGoogleEmail,
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
-    );
-    setIsGoogleSubmitting(false);
-
-    if (success) {
-      router.push("/");
     }
   };
 

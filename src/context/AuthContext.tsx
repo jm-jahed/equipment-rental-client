@@ -23,6 +23,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string, image?: string) => Promise<boolean>;
   loginWithGoogle: (name: string, email: string, image?: string) => Promise<boolean>;
+  updateProfile: (data: { name?: string; image?: string; phone?: string; address?: string }) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -36,12 +37,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-  // Verify and hydrate existing session from localStorage on reload
+  // Verify and hydrate existing session from localStorage or BetterAuth session cookie on reload
   useEffect(() => {
     const initializeAuth = async () => {
       const storedToken = localStorage.getItem("token");
 
+      // If no token in localStorage, check if BetterAuth session cookie exists (e.g. after Google OAuth redirect)
       if (!storedToken) {
+        try {
+          const sessionRes = await fetch(`${API_URL}/auth/session-token`, {
+            credentials: "include",
+          });
+          if (sessionRes.ok) {
+            const sessionData = await sessionRes.json();
+            if (sessionData.success && sessionData.token && sessionData.user) {
+              localStorage.setItem("token", sessionData.token);
+              setToken(sessionData.token);
+              setUser(sessionData.user);
+              setIsLoading(false);
+              return;
+            }
+          }
+        } catch (sessionErr) {
+          console.debug("No BetterAuth cookie session:", sessionErr);
+        }
+
         setIsLoading(false);
         return;
       }
@@ -171,6 +191,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfile = async (profileData: { name?: string; image?: string; phone?: string; address?: string }): Promise<boolean> => {
+    const currentToken = token || localStorage.getItem("token");
+    if (!currentToken) {
+      toast.error("You must be logged in to update your profile.");
+      return false;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/auth/profile`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${currentToken}`,
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        toast.error(data.message || "Failed to update profile.");
+        return false;
+      }
+
+      setUser(data.user);
+      toast.success(data.message || "Profile updated successfully!");
+      return true;
+    } catch (error) {
+      console.error("Profile update error:", error);
+      toast.error("Network error while updating profile.");
+      return false;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
@@ -188,6 +242,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         loginWithGoogle,
+        updateProfile,
         logout,
       }}
     >
