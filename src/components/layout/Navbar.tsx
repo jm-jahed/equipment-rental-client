@@ -1,17 +1,48 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Wrench, Menu, X, LogIn, UserPlus } from "lucide-react";
+import {
+  Wrench,
+  Menu,
+  X,
+  LogIn,
+  UserPlus,
+  LogOut,
+  ChevronDown,
+  User,
+  Heart,
+  Calendar,
+  PlusCircle,
+  Package,
+  Users,
+  ShieldCheck,
+} from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { useAuth } from "@/context/AuthContext";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Navigation links defined per assignment specifications
+  const pathname = usePathname();
+  const { user, logout } = useAuth();
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "All Equipment", href: "/equipment" },
@@ -65,19 +96,169 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
 
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                <LogIn className="w-4 h-4 mr-1.5" />
-                Login
-              </Button>
-            </Link>
+            {user ? (
+              /* User logged in: Profile & Role Dropdown */
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 p-1.5 pl-2.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold text-xs uppercase overflow-hidden">
+                    {user.image ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      user.name.charAt(0)
+                    )}
+                  </div>
+                  <div className="text-left hidden lg:block">
+                    <p className="text-xs font-semibold text-slate-900 dark:text-white leading-none">
+                      {user.name}
+                    </p>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium capitalize">
+                      {user.role}
+                    </span>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-slate-400 ml-1" />
+                </button>
 
-            <Link href="/register">
-              <Button variant="primary" size="sm">
-                <UserPlus className="w-4 h-4 mr-1.5" />
-                Register
-              </Button>
-            </Link>
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl py-2 z-50 text-sm">
+                    <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
+                      <p className="font-semibold text-slate-900 dark:text-white truncate">{user.name}</p>
+                      <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                      <Badge variant="warning" className="mt-1.5 text-[10px]">
+                        {user.role} Account
+                      </Badge>
+                    </div>
+
+                    <div className="py-1">
+                      {/* Customer Navigation */}
+                      {user.role === "Customer" && (
+                        <>
+                          <Link
+                            href="/dashboard/customer/rentals"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <Calendar className="w-4 h-4 text-slate-400" />
+                            My Rentals
+                          </Link>
+                          <Link
+                            href="/dashboard/customer/favorites"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <Heart className="w-4 h-4 text-slate-400" />
+                            Saved Favorites
+                          </Link>
+                        </>
+                      )}
+
+                      {/* Equipment Owner Navigation */}
+                      {user.role === "Owner" && (
+                        <>
+                          <Link
+                            href="/dashboard/owner/add-equipment"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <PlusCircle className="w-4 h-4 text-slate-400" />
+                            Add Equipment
+                          </Link>
+                          <Link
+                            href="/dashboard/owner/my-equipment"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <Package className="w-4 h-4 text-slate-400" />
+                            My Equipment
+                          </Link>
+                          <Link
+                            href="/dashboard/owner/rentals"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <Calendar className="w-4 h-4 text-slate-400" />
+                            Equipment Rentals
+                          </Link>
+                        </>
+                      )}
+
+                      {/* Admin Navigation */}
+                      {user.role === "Admin" && (
+                        <>
+                          <Link
+                            href="/dashboard/admin/users"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <Users className="w-4 h-4 text-slate-400" />
+                            All Users
+                          </Link>
+                          <Link
+                            href="/dashboard/admin/equipment"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <ShieldCheck className="w-4 h-4 text-slate-400" />
+                            All Equipment
+                          </Link>
+                          <Link
+                            href="/dashboard/admin/rentals"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <Calendar className="w-4 h-4 text-slate-400" />
+                            All Rentals
+                          </Link>
+                        </>
+                      )}
+
+                      <Link
+                        href="/dashboard/profile"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border-t border-slate-100 dark:border-slate-800 mt-1"
+                      >
+                        <User className="w-4 h-4 text-slate-400" />
+                        My Profile
+                      </Link>
+                    </div>
+
+                    <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                      <button
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-left font-medium"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* User logged out: Login / Register */
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm">
+                    <LogIn className="w-4 h-4 mr-1.5" />
+                    Login
+                  </Button>
+                </Link>
+
+                <Link href="/register">
+                  <Button variant="primary" size="sm">
+                    <UserPlus className="w-4 h-4 mr-1.5" />
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu trigger */}
@@ -97,6 +278,16 @@ export function Navbar() {
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-3">
+          {user && (
+            <div className="p-3 mb-2 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-sm text-slate-900 dark:text-white">{user.name}</p>
+                <p className="text-xs text-slate-500">{user.email}</p>
+              </div>
+              <Badge variant="warning">{user.role}</Badge>
+            </div>
+          )}
+
           <nav className="flex flex-col space-y-1">
             {navLinks.map((link) => (
               <Link
@@ -112,21 +303,48 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
+
+            {user && (
+              <Link
+                href="/dashboard/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                My Profile
+              </Link>
+            )}
           </nav>
 
           <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
-            <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" size="md" className="w-full justify-center">
-                <LogIn className="w-4 h-4 mr-2" />
-                Login
+            {user ? (
+              <Button
+                variant="danger"
+                size="md"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  logout();
+                }}
+                className="w-full justify-center"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
               </Button>
-            </Link>
-            <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="primary" size="md" className="w-full justify-center">
-                <UserPlus className="w-4 h-4 mr-2" />
-                Register
-              </Button>
-            </Link>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" size="md" className="w-full justify-center">
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="primary" size="md" className="w-full justify-center">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
