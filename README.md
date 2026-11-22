@@ -46,7 +46,27 @@ A modern full-stack web application connecting heavy machinery and equipment own
 
 ---
 
-## Tech Stack
+### Official Assignment 9 Categories
+1. **Construction Equipment** (Excavators, Rollers, Skid-steers)
+2. **Photography Equipment** (Cinema cameras, Gimbals, High-output lighting)
+3. **Vehicles & Transportation** (Forklifts, Telescopic handlers, Electric stackers)
+4. **Agriculture Equipment** (Farm tractors, Combine harvesters, Power tillers)
+5. **Electronics** (Industrial soundproof & silent generators)
+6. **Event Equipment** (Line array concert rigs, Aluminum truss roofs, Digital mixing consoles, Concert moving heads)
+
+---
+
+## Verified Demo Credentials
+
+| Role | Email | Password |
+|---|---|---|
+| **Admin** | `jm.jahedmasud+demoadmin@gmail.com` | `P@ss-8a7bb1c4ce5c3fdf-Adm!` |
+| **Owner** | `jm.jahedmasud+demoowner@gmail.com` | `P@ss-177416f8816e82d5-Own!` |
+| **Customer** | Direct registration or Google OAuth 2.0 | N/A |
+
+---
+
+## Tech Stack & Packages
 
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
