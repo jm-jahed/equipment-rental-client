@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { LogIn, Lock, Mail } from "lucide-react";
@@ -17,6 +17,8 @@ export default function LoginPage() {
 
   const { login } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export default function LoginPage() {
     setIsSubmitting(false);
 
     if (success) {
-      router.push("/");
+      router.push(redirectUrl);
     }
   };
 
@@ -39,9 +41,10 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsGoogleSubmitting(true);
     try {
+      const targetPath = redirectUrl && redirectUrl.startsWith("/") ? redirectUrl : "/dashboard";
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: `${window.location.origin}/dashboard`,
+        callbackURL: `${window.location.origin}${targetPath}`,
       });
     } catch (err: any) {
       console.error("BetterAuth Google OAuth error:", err);
