@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { API_BASE_URL } from "@/lib/api";
 import { BookingModal } from "@/components/booking/BookingModal";
+import { useAuth } from "@/context/AuthContext";
 import {
   ArrowLeft,
   Heart,
@@ -46,6 +47,7 @@ interface EquipmentDetail {
 }
 
 export default function EquipmentDetailPage({ params }: { params?: { id: string } }) {
+  const { user } = useAuth();
   const routerParams = useParams();
   const equipmentId = (routerParams?.id as string) || (params as any)?.id || "";
 
@@ -146,15 +148,58 @@ export default function EquipmentDetailPage({ params }: { params?: { id: string 
     <ProtectedRoute>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto space-y-6">
-          {/* Breadcrumb / Back button */}
+          {/* Breadcrumb / Back button with role awareness */}
           <div className="flex items-center justify-between">
-            <Link
-              href="/equipment"
-              className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Catalog
-            </Link>
+            {user?.role === "Admin" ? (
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <Link
+                  href="/dashboard/admin/equipment"
+                  className="inline-flex items-center text-sm font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1.5" />
+                  Back to Admin Equipment
+                </Link>
+                <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+                <Link
+                  href="/dashboard/admin"
+                  className="text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                >
+                  Admin Dashboard
+                </Link>
+                <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+                <Link
+                  href="/equipment"
+                  className="text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                >
+                  Public Catalog
+                </Link>
+              </div>
+            ) : user?.role === "Owner" ? (
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                <Link
+                  href="/dashboard/owner/my-equipment"
+                  className="inline-flex items-center text-sm font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1.5" />
+                  Back to My Equipment
+                </Link>
+                <span className="text-slate-300 dark:text-slate-700">&bull;</span>
+                <Link
+                  href="/equipment"
+                  className="text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                >
+                  Public Catalog
+                </Link>
+              </div>
+            ) : (
+              <Link
+                href="/equipment"
+                className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Catalog
+              </Link>
+            )}
           </div>
 
           {isLoading ? (
@@ -169,8 +214,14 @@ export default function EquipmentDetailPage({ params }: { params?: { id: string 
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">Unable to View Equipment</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">{errorMsg || "Equipment not found or removed."}</p>
-              <Link href="/equipment">
-                <Button variant="primary">Return to Equipment Catalog</Button>
+              <Link href={user?.role === "Admin" ? "/dashboard/admin/equipment" : user?.role === "Owner" ? "/dashboard/owner/my-equipment" : "/equipment"}>
+                <Button variant="primary">
+                  {user?.role === "Admin"
+                    ? "Return to Admin Equipment"
+                    : user?.role === "Owner"
+                    ? "Return to My Equipment"
+                    : "Return to Equipment Catalog"}
+                </Button>
               </Link>
             </div>
           ) : (
