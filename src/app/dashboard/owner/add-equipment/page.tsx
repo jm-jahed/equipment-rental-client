@@ -21,11 +21,11 @@ import {
 
 const CATEGORIES = [
   "Construction Equipment",
-  "Power & Generators",
-  "Material Handling",
-  "Agricultural Equipment",
-  "Industrial Tools",
-  "Lifting Equipment",
+  "Photography Equipment",
+  "Vehicles & Transportation",
+  "Agriculture Equipment",
+  "Electronics",
+  "Event Equipment",
 ];
 
 export default function AddEquipmentPage() {

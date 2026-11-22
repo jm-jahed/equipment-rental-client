@@ -103,6 +103,9 @@ export function Footer() {
               <li>
                 <Link href="/equipment?category=Electronics" className="hover:text-amber-400 transition-colors">Electronics</Link>
               </li>
+              <li>
+                <Link href="/equipment?category=Event+Equipment" className="hover:text-amber-400 transition-colors">Event Equipment</Link>
+              </li>
             </ul>
           </div>
 
