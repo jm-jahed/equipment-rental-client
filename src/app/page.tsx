@@ -22,7 +22,8 @@ import {
   ChevronRight,
   Award,
   Layers,
-  Heart
+  Heart,
+  Camera,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -148,83 +149,83 @@ export default function Home() {
       color: "from-amber-500/20 to-orange-500/20 text-amber-500",
     },
     {
-      name: "Power & Generators",
-      description: "Industrial diesel generators, quiet inverter units, and commercial power systems.",
-      icon: Cpu,
+      name: "Photography Equipment",
+      description: "Cinema 8K camera packages, motorized gimbal stabilizers, and studio LED lighting.",
+      icon: Camera,
       count: "4 Listings",
-      color: "from-purple-500/20 to-indigo-500/20 text-purple-500",
+      color: "from-blue-500/20 to-indigo-500/20 text-blue-500",
     },
     {
-      name: "Material Handling",
-      description: "Counterbalance forklifts, electric pallet stackers, and rough-terrain telehandlers.",
+      name: "Vehicles & Transportation",
+      description: "Counterbalance forklifts, rough-terrain telehandlers, and electric pallet stackers.",
       icon: Truck,
       count: "4 Listings",
-      color: "from-blue-500/20 to-cyan-500/20 text-blue-500",
+      color: "from-emerald-500/20 to-teal-500/20 text-emerald-500",
     },
     {
-      name: "Agricultural Equipment",
-      description: "4WD farm tractors, combine harvesters, power tillers, and rotary cutters.",
+      name: "Agriculture Equipment",
+      description: "4WD farm tractors, combine paddy harvesters, power tillers, and rotary cutters.",
       icon: Tractor,
       count: "4 Listings",
       color: "from-green-500/20 to-lime-500/20 text-green-500",
     },
     {
-      name: "Industrial Tools",
-      description: "Concrete power saws, heavy demolition breakers, vibrators, and plate compactors.",
-      icon: Layers,
+      name: "Electronics",
+      description: "Industrial diesel generators, quiet inverter units, and commercial power systems.",
+      icon: Cpu,
       count: "4 Listings",
-      color: "from-emerald-500/20 to-teal-500/20 text-emerald-500",
+      color: "from-purple-500/20 to-violet-500/20 text-purple-500",
     },
     {
-      name: "Lifting Equipment",
-      description: "Articulated boom lifts, slab scissor platforms, mobile cranes, and gantry hoists.",
-      icon: Tag,
+      name: "Event Equipment",
+      description: "Concert line array audio rigs, outdoor stage truss canopies, and moving head lights.",
+      icon: Sparkles,
       count: "4 Listings",
       color: "from-pink-500/20 to-rose-500/20 text-pink-500",
     },
   ];
 
-  // Verified Customer Reviews per Assignment 9 (at least 4)
+  // Verified Customer Reviews per Assignment 9 (at least 4 with Bangladeshi localization)
   const reviews = [
     {
       id: 1,
-      name: "Marcus Vance",
-      role: "Lead Construction Superintendent",
-      company: "Apex Infrastructure Group",
+      name: "Mohammad Rahman",
+      role: "Lead Construction Project Manager",
+      company: "Apex Infrastructure Group, Dhaka",
       rating: 5,
       comment:
-        "Renting a 20-ton CAT excavator for our highway bridge project was seamless. The owner delivered right on time, machine was immaculate, and Stripe invoicing gave our accounting team zero headaches.",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        "Renting a 20-ton CAT excavator for our highway expansion project in Dhaka was completely seamless. The machine arrived on schedule, in immaculate condition, and the transparent BDT invoicing gave our accounting team complete peace of mind.",
+      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
     },
     {
       id: 2,
-      name: "Elena Rostova",
+      name: "Nusrat Jahan",
       role: "Director of Photography",
-      company: "Velvet Horizon Studios",
+      company: "Velvet Horizon Studios, Chattogram",
       rating: 5,
       comment:
-        "We needed three RED V-Raptor cinema packages for a 10-day commercial shoot in Austin. Finding verified owners with insured equipment saved our production budget over $14,000.",
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+        "We needed specialized 8K cinema packages for a 10-day commercial shoot in Chattogram. Finding verified owners with insured equipment saved our production schedule. The digital contracts and instant Stripe checkout were top-notch.",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
     },
     {
       id: 3,
-      name: "David Kim",
-      role: "Independent Equipment Owner",
-      company: "Kim Hauling & Earthworks",
+      name: "Tanvir Ahmed",
+      role: "Independent Fleet Owner",
+      company: "Ahmed Earthworks & Machinery, Gazipur",
       rating: 5,
       comment:
-        "Listing my idle skid steers and boom lifts here has generated $32,000 in rental revenue this year alone. The deposit guarantees and automated rental contracts give me complete peace of mind.",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+        "Listing idle excavators and forklifts on RentEquip has generated consistent rental revenue for our business. The verified renter verification, security deposit guarantee, and direct BDT payouts make this platform our first choice.",
+      avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
     },
     {
       id: 4,
-      name: "Samantha Wright",
-      role: "Technical Operations Manager",
-      company: "Starlight Festival Productions",
+      name: "Farhana Akter",
+      role: "Production & Event Logistics Director",
+      company: "Green Bengal Events & Media, Sylhet",
       rating: 5,
       comment:
-        "From high-output diesel generators to line array sound rigs, RentEquip is our go-to partner. Real-time availability checks mean no last-minute festival surprises.",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+        "From soundproof diesel generators to concert line array sound rigs, RentEquip is our trusted rental partner in Bangladesh. Real-time availability checks prevent last-minute festival shortages and the owner communication was seamless.",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
     },
   ];
 
@@ -603,14 +604,14 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 mb-3">
-            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-            Customer Satisfaction
+            <Sparkles className="w-3.5 h-3.5" />
+            Sample Customer Reviews
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Trusted by Professionals Nationwide
+            Trusted by Professionals in Bangladesh
           </h2>
           <p className="mt-3 text-base text-slate-600 dark:text-slate-400">
-            Read authentic feedback from contractors, production crews, and industrial equipment owners.
+            Demonstration customer testimonials reflecting authentic commercial equipment rental experiences across Dhaka, Chattogram, and Sylhet.
           </p>
         </div>
 
@@ -636,6 +637,10 @@ export default function Home() {
                 <img
                   src={rev.avatar}
                   alt={rev.name}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80";
+                  }}
                   className="w-12 h-12 rounded-full object-cover border-2 border-amber-500"
                 />
                 <div>
