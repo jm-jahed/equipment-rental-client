@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -44,9 +45,9 @@ interface EquipmentDetail {
   createdAt?: string;
 }
 
-export default function EquipmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const unwrappedParams = use(params);
-  const equipmentId = unwrappedParams.id;
+export default function EquipmentDetailPage({ params }: { params?: { id: string } }) {
+  const routerParams = useParams();
+  const equipmentId = (routerParams?.id as string) || (params as any)?.id || "";
 
   const [equipment, setEquipment] = useState<EquipmentDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -41,10 +41,12 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsGoogleSubmitting(true);
     try {
-      const targetPath = redirectUrl && redirectUrl.startsWith("/") ? redirectUrl : "/dashboard";
+      const destination = redirectUrl.startsWith("/")
+        ? `${window.location.origin}${redirectUrl}`
+        : `${window.location.origin}/dashboard`;
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: `${window.location.origin}${targetPath}`,
+        callbackURL: destination,
       });
     } catch (err: any) {
       console.error("BetterAuth Google OAuth error:", err);
