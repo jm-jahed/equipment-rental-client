@@ -67,6 +67,11 @@ export function BookingModal({ isOpen, onClose, equipment }: BookingModalProps) 
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("auth_token") || localStorage.getItem("token");
+      if (!token) {
+        setErrorMsg("Your session has expired. Please log in to complete your booking.");
+        setIsSubmitting(false);
+        return;
+      }
       const apiUrl = API_BASE_URL;
 
       const res = await fetch(`${apiUrl}/api/bookings/checkout`, {
