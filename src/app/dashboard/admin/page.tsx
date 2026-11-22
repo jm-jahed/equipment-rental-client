@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import {
   Users,
   Package,
@@ -52,7 +53,7 @@ export default function AdminAnalyticsOverviewPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   useEffect(() => {
     const fetchAnalytics = async () => {

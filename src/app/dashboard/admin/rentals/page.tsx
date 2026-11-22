@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Badge } from "@/components/ui/Badge";
 import { Loader2 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 interface AdminRentalBooking {
   _id: string;
@@ -38,7 +39,7 @@ export default function AdminAllRentalsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   useEffect(() => {
     const fetchAllBookings = async () => {

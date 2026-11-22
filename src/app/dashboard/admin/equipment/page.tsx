@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import { Modal } from "@/components/ui/Modal";
 import {
   CheckCircle,
@@ -43,7 +44,7 @@ export default function AdminManageEquipmentPage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   const fetchAllEquipment = async () => {
     try {
