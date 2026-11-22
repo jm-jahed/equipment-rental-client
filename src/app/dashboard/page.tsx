@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import {
   Calendar,
   Package,
@@ -52,7 +53,7 @@ export default function CustomerDashboardPage() {
   const [totalRecords, setTotalRecords] = useState(0);
   const limit = 10;
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   const fetchRentals = useCallback(async (targetPage: number) => {
     try {

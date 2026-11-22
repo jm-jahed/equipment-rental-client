@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import { Badge } from "@/components/ui/Badge";
 import {
   User,
@@ -27,7 +28,7 @@ export default function ProfileSettingsPage() {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   // Handle direct file upload via server ImgBB proxy
   const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

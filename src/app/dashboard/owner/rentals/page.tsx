@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import {
   Calendar,
   CheckCircle,
@@ -43,7 +44,7 @@ export default function OwnerRentalsPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   const fetchOwnerRentals = async () => {
     try {

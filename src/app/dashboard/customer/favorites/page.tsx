@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import {
   Heart,
   Trash2,
@@ -37,7 +38,7 @@ export default function CustomerFavoritesPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [actionId, setActionId] = useState<string | null>(null);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   const fetchFavorites = async () => {
     try {
