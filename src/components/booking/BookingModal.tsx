@@ -43,7 +43,7 @@ export function BookingModal({ isOpen, onClose, equipment }: BookingModalProps) 
   const end = new Date(endDate);
   const diffTime = Math.max(0, end.getTime() - start.getTime());
   const durationDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-  const totalCost = durationDays * equipment.rentalPrice * quantity;
+  const totalCost = durationDays * (equipment.rentalPrice || 0) * quantity;
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,7 +131,7 @@ export function BookingModal({ isOpen, onClose, equipment }: BookingModalProps) 
               {equipment.name}
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              ৳{equipment.rentalPrice?.toLocaleString()} / {equipment.rentalType.toLowerCase()} &bull; {equipment.availableQuantity} available
+              ৳{equipment.rentalPrice?.toLocaleString()} / {equipment.rentalType?.toLowerCase() || "daily"} &bull; {equipment.availableQuantity ?? 0} available
             </p>
           </div>
         </div>

@@ -19,7 +19,12 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push("/login");
+      const currentPath = typeof window !== "undefined" ? window.location.pathname + window.location.search : "";
+      if (currentPath && currentPath !== "/login") {
+        router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+      } else {
+        router.push("/login");
+      }
     }
   }, [user, isLoading, router]);
 
