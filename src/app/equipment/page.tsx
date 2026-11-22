@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/context/AuthContext";
+import { API_URL } from "@/lib/api";
 
 interface EquipmentItem {
   _id: string;
@@ -85,8 +86,6 @@ export default function AllEquipmentPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-
   const fetchEquipment = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -118,7 +117,7 @@ export default function AllEquipmentPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [API_URL, search, selectedCategory, selectedRentalType, minPrice, maxPrice, availabilityOnly, sortBy, page]);
+  }, [search, selectedCategory, selectedRentalType, minPrice, maxPrice, availabilityOnly, sortBy, page]);
 
   useEffect(() => {
     fetchEquipment();

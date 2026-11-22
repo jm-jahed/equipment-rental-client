@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { API_URL } from "@/lib/api";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -50,8 +51,6 @@ export default function Home() {
   const [featuredItems, setFeaturedItems] = useState<EquipmentItem[]>([]);
   const [isLoadingFeatured, setIsLoadingFeatured] = useState(true);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
@@ -68,7 +67,7 @@ export default function Home() {
     };
 
     fetchFeatured();
-  }, [API_URL]);
+  }, []);
 
   const handleViewDetails = (equipmentId: string) => {
     if (!user) {

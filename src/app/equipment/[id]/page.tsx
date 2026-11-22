@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import { BookingModal } from "@/components/booking/BookingModal";
 import {
   ArrowLeft,
@@ -54,7 +55,7 @@ export default function EquipmentDetailPage({ params }: { params: Promise<{ id: 
   const [favLoading, setFavLoading] = useState(false);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   useEffect(() => {
     const fetchEquipmentAndFav = async () => {

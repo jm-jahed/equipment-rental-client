@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { Calendar, MapPin, Phone, FileText, CreditCard, Loader2, AlertCircle } from "lucide-react";
 
@@ -66,7 +67,7 @@ export function BookingModal({ isOpen, onClose, equipment }: BookingModalProps) 
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("auth_token") || localStorage.getItem("token");
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const apiUrl = API_BASE_URL;
 
       const res = await fetch(`${apiUrl}/api/bookings/checkout`, {
         method: "POST",

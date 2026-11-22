@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Button } from "@/components/ui/Button";
+import { API_BASE_URL } from "@/lib/api";
 import { Badge } from "@/components/ui/Badge";
 import {
   CheckCircle,
@@ -25,7 +26,7 @@ function PaymentSuccessContent() {
   const [bookingData, setBookingData] = useState<any>(null);
   const [paymentData, setPaymentData] = useState<any>(null);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = API_BASE_URL;
 
   useEffect(() => {
     const verifyPayment = async () => {
