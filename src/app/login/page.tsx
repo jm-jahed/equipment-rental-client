@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,22 +44,8 @@ export default function LoginPage() {
         callbackURL: `${window.location.origin}/dashboard`,
       });
     } catch (err: any) {
-      console.warn("BetterAuth popup/redirect error, falling back to simulated prompt:", err);
-      const simulatedGoogleEmail = prompt("Enter your Google Account email:", "user@gmail.com");
-      if (!simulatedGoogleEmail) {
-        setIsGoogleSubmitting(false);
-        return;
-      }
-
-      const simulatedName = simulatedGoogleEmail.split("@")[0];
-      const success = await loginWithGoogle(
-        simulatedName.charAt(0).toUpperCase() + simulatedName.slice(1),
-        simulatedGoogleEmail,
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
-      );
-      if (success) {
-        router.push("/");
-      }
+      console.error("BetterAuth Google OAuth error:", err);
+      toast.error(err?.message || "Failed to initiate Google sign-in. Please try again.");
     } finally {
       setIsGoogleSubmitting(false);
     }

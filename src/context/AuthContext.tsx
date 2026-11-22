@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { API_URL } from "@/lib/api";
 
 export type UserRole = "Customer" | "Owner" | "Admin";
 
@@ -34,8 +35,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
   // Verify and hydrate existing session from localStorage or BetterAuth session cookie on reload
   useEffect(() => {
@@ -93,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initializeAuth();
-  }, [API_URL]);
+  }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
