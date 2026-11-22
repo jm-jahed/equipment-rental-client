@@ -179,7 +179,7 @@ export default function AdminAnalyticsOverviewPage() {
                   </div>
                 </div>
                 <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                  ${data.revenue.total.toLocaleString()}
+                  ৳{data.revenue.total.toLocaleString()}
                 </div>
                 <p className="text-[11px] text-slate-400">
                   Calculated dynamically from paid bookings
@@ -217,7 +217,7 @@ export default function AdminAnalyticsOverviewPage() {
                             <span className="text-slate-700 dark:text-slate-300 font-semibold">{item.month}</span>
                             <span className="text-slate-500 dark:text-slate-400">
                               {item.bookings} booking{item.bookings === 1 ? "" : "s"} &bull;{" "}
-                              <strong className="text-emerald-600 dark:text-emerald-400">${item.revenue.toLocaleString()}</strong>
+                              <strong className="text-emerald-600 dark:text-emerald-400">৳{item.revenue.toLocaleString()}</strong>
                             </span>
                           </div>
                           <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">

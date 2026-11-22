@@ -190,7 +190,7 @@ export default function CustomerFavoritesPage() {
                     <div>
                       <span className="text-[10px] text-slate-400 block">Rate</span>
                       <span className="text-base font-extrabold text-amber-600 dark:text-amber-400">
-                        ${eq.rentalPrice}{" "}
+                        ৳{eq.rentalPrice?.toLocaleString()}{" "}
                         <span className="text-xs font-normal text-slate-500">
                           /{eq.rentalType.toLowerCase()}
                         </span>

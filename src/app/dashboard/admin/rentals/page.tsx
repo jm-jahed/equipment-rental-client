@@ -143,7 +143,7 @@ export default function AdminAllRentalsPage() {
                       </td>
 
                       <td className="py-3.5 px-4 font-bold text-amber-600 dark:text-amber-400">
-                        ${r.totalAmount?.toLocaleString()}
+                        ৳{r.totalAmount?.toLocaleString()}
                       </td>
 
                       <td className="py-3.5 px-4">

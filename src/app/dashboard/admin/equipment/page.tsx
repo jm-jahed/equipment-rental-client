@@ -204,7 +204,7 @@ export default function AdminManageEquipmentPage() {
                       </td>
 
                       <td className="py-3.5 px-4 font-bold text-amber-600 dark:text-amber-400">
-                        ${item.rentalPrice}{" "}
+                        ৳{item.rentalPrice?.toLocaleString()}{" "}
                         <span className="text-[10px] text-slate-400 font-normal">
                           /{item.rentalType.toLowerCase()}
                         </span>

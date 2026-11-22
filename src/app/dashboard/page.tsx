@@ -122,7 +122,7 @@ export default function CustomerDashboardPage() {
           </div>
           <div>
             <span className="text-xs text-amber-200 block">Invested (Current)</span>
-            <span className="text-2xl font-black">${totalSpent.toLocaleString()}</span>
+            <span className="text-2xl font-black">৳{totalSpent.toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -226,7 +226,7 @@ export default function CustomerDashboardPage() {
 
                       {/* Total */}
                       <td className="py-3.5 px-4 font-bold text-amber-600 dark:text-amber-400">
-                        ${rental.totalAmount?.toLocaleString()}
+                        ৳{rental.totalAmount?.toLocaleString()}
                       </td>
 
                       {/* Payment status */}

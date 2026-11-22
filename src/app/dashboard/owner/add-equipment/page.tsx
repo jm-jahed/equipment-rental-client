@@ -15,15 +15,17 @@ import {
   AlertCircle,
   Loader2,
   Camera,
+  FileText,
+  Tag,
 } from "lucide-react";
 
 const CATEGORIES = [
-  "Construction",
-  "Agriculture",
-  "Heavy Machinery",
-  "Power Tools",
-  "Audio/Visual",
-  "Party/Events",
+  "Construction Equipment",
+  "Power & Generators",
+  "Material Handling",
+  "Agricultural Equipment",
+  "Industrial Tools",
+  "Lifting Equipment",
 ];
 
 export default function AddEquipmentPage() {
@@ -31,12 +33,15 @@ export default function AddEquipmentPage() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("Construction");
+  const [category, setCategory] = useState("Construction Equipment");
   const [rentalPrice, setRentalPrice] = useState("");
   const [rentalType, setRentalType] = useState<"Daily" | "Weekly" | "Monthly">("Daily");
   const [condition, setCondition] = useState<"New" | "Good" | "Fair">("Good");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
   const [location, setLocation] = useState("");
   const [availableQuantity, setAvailableQuantity] = useState("1");
+  const [rentalTerms, setRentalTerms] = useState("");
   const [image, setImage] = useState("");
 
   const [isUploading, setIsUploading] = useState(false);
@@ -80,7 +85,11 @@ export default function AddEquipmentPage() {
             throw new Error(data.message || "Failed to upload image.");
           }
 
-          setImage(data.data.url);
+          const uploadedUrl = data.url || data.data?.url || data.display_url;
+          if (!uploadedUrl) {
+            throw new Error("Invalid response from image upload service.");
+          }
+          setImage(uploadedUrl);
         } catch (err: any) {
           setErrorMsg(err.message || "Failed to upload machinery image.");
         } finally {
@@ -100,7 +109,12 @@ export default function AddEquipmentPage() {
     setSuccessMsg("");
 
     if (!name.trim() || !description.trim() || !location.trim() || !rentalPrice) {
-      setErrorMsg("Please fill in all required fields.");
+      setErrorMsg("Please fill in all required fields (Name, Description, Location, Price).");
+      return;
+    }
+
+    if (!image.trim()) {
+      setErrorMsg("Please upload or provide an equipment photograph.");
       return;
     }
 
@@ -133,9 +147,12 @@ export default function AddEquipmentPage() {
           rentalPrice: priceNum,
           rentalType,
           condition,
+          brand: brand.trim(),
+          model: model.trim(),
           location: location.trim(),
           availableQuantity: qtyNum,
           image: image.trim(),
+          rentalTerms: rentalTerms.trim(),
         }),
       });
 
@@ -163,7 +180,7 @@ export default function AddEquipmentPage() {
             List New Machinery or Tool
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Publish equipment to the platform catalog for customer rental bookings
+            Publish equipment to the platform catalog for customer rental bookings. New listings default to Pending status awaiting administrator approval.
           </p>
         </div>
 
@@ -185,7 +202,7 @@ export default function AddEquipmentPage() {
           {/* Equipment Image Preview & Upload */}
           <div className="space-y-2">
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-              Equipment Photo
+              Equipment Photo *
             </label>
             <div className="flex flex-col sm:flex-row items-center gap-5">
               <div className="relative aspect-[16/10] w-full sm:w-56 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden border border-slate-200 dark:border-slate-700 flex items-center justify-center">
@@ -204,14 +221,14 @@ export default function AddEquipmentPage() {
                 )}
               </div>
 
-              <div className="space-y-2 flex-1">
+              <div className="space-y-2 flex-1 w-full">
                 <p className="text-xs text-slate-500">
-                  Upload high-resolution photo. Max 5MB (JPG, PNG, WEBP). Stored securely via ImgBB.
+                  Upload high-resolution photo (Max 5MB) via ImgBB, or paste direct image URL below.
                 </p>
                 <div className="flex items-center gap-3">
                   <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-colors">
                     <Upload className="w-4 h-4 text-amber-500" />
-                    Choose File
+                    Upload File
                     <input
                       type="file"
                       accept="image/*"
@@ -230,6 +247,15 @@ export default function AddEquipmentPage() {
                     </button>
                   )}
                 </div>
+                <div>
+                  <input
+                    type="url"
+                    placeholder="Or paste direct image URL (https://...)"
+                    value={image}
+                    onChange={(e) => setImage(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -244,7 +270,7 @@ export default function AddEquipmentPage() {
                 <Package className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
                 <input
                   type="text"
-                  placeholder="e.g., Caterpillar 305.5 Mini Excavator"
+                  placeholder="e.g., Caterpillar 305.5 Mini Hydraulic Excavator"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -271,14 +297,46 @@ export default function AddEquipmentPage() {
             </div>
           </div>
 
+          {/* Brand & Model */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                Brand / Manufacturer
+              </label>
+              <div className="relative">
+                <Tag className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="e.g., Caterpillar, Bobcat, DeWalt, John Deere"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                Model Number / Series
+              </label>
+              <input
+                type="text"
+                placeholder="e.g., 305.5 CR, 5075E, DWE7491RS"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+          </div>
+
           {/* Description */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Description & Specifications *
+              Description & Technical Specifications *
             </label>
             <textarea
               rows={4}
-              placeholder="Provide complete machine details, horsepower, capacity, and rental requirements..."
+              placeholder="Provide complete machine details, horsepower, operational capacity, and rental requirements..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full p-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
@@ -290,7 +348,7 @@ export default function AddEquipmentPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                Rental Price ($ USD) *
+                Rental Price (৳ BDT) *
               </label>
               <div className="relative">
                 <DollarSign className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
@@ -372,6 +430,23 @@ export default function AddEquipmentPage() {
                   required
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Rental Terms */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              Rental Terms & Security Deposit Policy
+            </label>
+            <div className="relative">
+              <FileText className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+              <textarea
+                rows={3}
+                placeholder="e.g., Valid ID required. Equipment must be operated by certified personnel. $300 refundable deposit required upon handover."
+                value={rentalTerms}
+                onChange={(e) => setRentalTerms(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+              />
             </div>
           </div>
 
