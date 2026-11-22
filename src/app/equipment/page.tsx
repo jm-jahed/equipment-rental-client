@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Layers,
-  Sparkles
+  Sparkles,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -48,11 +49,11 @@ interface PaginationData {
 const CATEGORIES = [
   "All",
   "Construction Equipment",
-  "Photography Equipment",
-  "Vehicles & Transportation",
-  "Agriculture Equipment",
-  "Electronics",
-  "Event Equipment",
+  "Power & Generators",
+  "Material Handling",
+  "Agricultural Equipment",
+  "Industrial Tools",
+  "Lifting Equipment",
 ];
 
 const RENTAL_TYPES = ["All", "Daily", "Weekly", "Monthly"];
@@ -85,6 +86,72 @@ export default function AllEquipmentPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+  // Fetch user favorites on load / auth state change
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const token = typeof window !== "undefined" ? (localStorage.getItem("auth_token") || localStorage.getItem("token")) : null;
+      if (!token || !user) {
+        setFavoriteIds([]);
+        return;
+      }
+      try {
+        const res = await fetch(`${API_URL}/favorites`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data)) {
+            const ids = json.data
+              .map((fav: any) =>
+                typeof fav.equipmentId === "object" ? fav.equipmentId?._id : fav.equipmentId
+              )
+              .filter(Boolean);
+            setFavoriteIds(ids);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load favorites:", err);
+      }
+    };
+    fetchFavorites();
+  }, [user]);
+
+  const handleToggleFavorite = async (e: React.MouseEvent, equipmentId: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const token = typeof window !== "undefined" ? (localStorage.getItem("auth_token") || localStorage.getItem("token")) : null;
+    if (!token || !user) {
+      router.push("/login?redirect=/equipment");
+      return;
+    }
+
+    const isFav = favoriteIds.includes(equipmentId);
+    // Optimistic state update
+    setFavoriteIds((prev) =>
+      isFav ? prev.filter((id) => id !== equipmentId) : [...prev, equipmentId]
+    );
+
+    try {
+      const res = await fetch(`${API_URL}/favorites/${equipmentId}`, {
+        method: isFav ? "DELETE" : "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        // Revert on error
+        setFavoriteIds((prev) =>
+          isFav ? [...prev, equipmentId] : prev.filter((id) => id !== equipmentId)
+        );
+      }
+    } catch (err) {
+      console.error("Toggle favorite failed:", err);
+      // Revert on error
+      setFavoriteIds((prev) =>
+        isFav ? [...prev, equipmentId] : prev.filter((id) => id !== equipmentId)
+      );
+    }
+  };
 
   const fetchEquipment = useCallback(async () => {
     setIsLoading(true);
@@ -292,7 +359,7 @@ export default function AllEquipmentPage() {
           {/* Price Range Filter */}
           <div>
             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-              Price Range ($)
+              Price Range (৳)
             </label>
             <div className="grid grid-cols-2 gap-2">
               <Input
@@ -373,6 +440,10 @@ export default function AllEquipmentPage() {
                       <img
                         src={item.image}
                         alt={item.name}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80";
+                        }}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute top-2.5 left-2.5">
@@ -380,10 +451,25 @@ export default function AllEquipmentPage() {
                           {item.category}
                         </Badge>
                       </div>
-                      <div className="absolute top-2.5 right-2.5">
+                      <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
                         <Badge variant={item.availableQuantity > 0 ? "success" : "danger"} className="text-xs">
                           {item.availableQuantity > 0 ? `${item.availableQuantity} in stock` : "Out of stock"}
                         </Badge>
+                        <button
+                          type="button"
+                          onClick={(e) => handleToggleFavorite(e, item._id)}
+                          className="w-7 h-7 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white backdrop-blur-md flex items-center justify-center transition-all shadow-md group/fav border border-white/20 active:scale-95"
+                          title={favoriteIds.includes(item._id) ? "Remove from favorites" : "Add to favorites"}
+                          aria-label="Add to favorites"
+                        >
+                          <Heart
+                            className={`w-3.5 h-3.5 transition-colors ${
+                              favoriteIds.includes(item._id)
+                                ? "fill-red-500 text-red-500"
+                                : "text-white group-hover/fav:text-red-400"
+                            }`}
+                          />
+                        </button>
                       </div>
                     </div>
 
@@ -408,7 +494,7 @@ export default function AllEquipmentPage() {
                         <div>
                           <span className="text-xs text-slate-500 dark:text-slate-400 block">Rate</span>
                           <span className="text-lg font-black text-slate-900 dark:text-white">
-                            ${item.rentalPrice}
+                            ৳{item.rentalPrice?.toLocaleString()}
                             <span className="text-xs font-normal text-slate-400">/{item.rentalType?.toLowerCase()}</span>
                           </span>
                         </div>

@@ -151,7 +151,7 @@ function PaymentSuccessContent() {
             <div className="pt-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
               <span className="text-sm font-bold text-slate-900 dark:text-white">Total Amount Paid</span>
               <span className="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                ${bookingData?.totalAmount?.toLocaleString()} USD
+                ৳{bookingData?.totalAmount?.toLocaleString()} BDT
               </span>
             </div>
           </div>

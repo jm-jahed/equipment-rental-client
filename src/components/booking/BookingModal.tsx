@@ -126,7 +126,7 @@ export function BookingModal({ isOpen, onClose, equipment }: BookingModalProps) 
               {equipment.name}
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              ${equipment.rentalPrice} / {equipment.rentalType.toLowerCase()} &bull; {equipment.availableQuantity} available
+              ৳{equipment.rentalPrice?.toLocaleString()} / {equipment.rentalType.toLowerCase()} &bull; {equipment.availableQuantity} available
             </p>
           </div>
         </div>
@@ -206,7 +206,7 @@ export function BookingModal({ isOpen, onClose, equipment }: BookingModalProps) 
               <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
               <input
                 type="tel"
-                placeholder="+1 (555) 000-0000"
+                placeholder="+880 1800-000000"
                 value={contactNumber}
                 onChange={(e) => setContactNumber(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -259,11 +259,11 @@ export function BookingModal({ isOpen, onClose, equipment }: BookingModalProps) 
           </div>
           <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400">
             <span>Rate:</span>
-            <span className="font-medium text-slate-900 dark:text-white">${equipment.rentalPrice} &times; {quantity} unit{quantity > 1 ? "s" : ""}</span>
+            <span className="font-medium text-slate-900 dark:text-white">৳{equipment.rentalPrice?.toLocaleString()} &times; {quantity} unit{quantity > 1 ? "s" : ""}</span>
           </div>
           <div className="pt-2 border-t border-amber-500/20 flex justify-between items-center">
             <span className="text-sm font-bold text-slate-900 dark:text-white">Estimated Total:</span>
-            <span className="text-xl font-extrabold text-amber-600 dark:text-amber-400">${totalCost.toLocaleString()}</span>
+            <span className="text-xl font-extrabold text-amber-600 dark:text-amber-400">৳{totalCost.toLocaleString()}</span>
           </div>
         </div>
 

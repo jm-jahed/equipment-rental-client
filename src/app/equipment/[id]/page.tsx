@@ -169,6 +169,10 @@ export default function EquipmentDetailPage({ params }: { params: Promise<{ id: 
                     <img
                       src={equipment.image}
                       alt={equipment.name}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80";
+                      }}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -248,7 +252,7 @@ export default function EquipmentDetailPage({ params }: { params: Promise<{ id: 
                     <span className="text-xs text-slate-500 dark:text-slate-400 block">Rental Rate</span>
                     <div className="flex items-baseline gap-1 mt-1">
                       <span className="text-3xl font-extrabold text-amber-600 dark:text-amber-400">
-                        ${equipment.rentalPrice}
+                        ৳{equipment.rentalPrice?.toLocaleString()}
                       </span>
                       <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
                         / {equipment.rentalType.toLowerCase()}

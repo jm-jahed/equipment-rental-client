@@ -10,11 +10,9 @@ import {
   ShieldCheck,
   Clock,
   Truck,
-  Camera,
   HardHat,
   Tractor,
   Cpu,
-  Music,
   CreditCard,
   CalendarRange,
   Star,
@@ -23,7 +21,8 @@ import {
   Tag,
   ChevronRight,
   Award,
-  Layers
+  Layers,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -50,6 +49,68 @@ export default function Home() {
   const router = useRouter();
   const [featuredItems, setFeaturedItems] = useState<EquipmentItem[]>([]);
   const [isLoadingFeatured, setIsLoadingFeatured] = useState(true);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const token = typeof window !== "undefined" ? (localStorage.getItem("auth_token") || localStorage.getItem("token")) : null;
+      if (!token || !user) {
+        setFavoriteIds([]);
+        return;
+      }
+      try {
+        const res = await fetch(`${API_URL}/favorites`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data)) {
+            const ids = json.data
+              .map((fav: any) =>
+                typeof fav.equipmentId === "object" ? fav.equipmentId?._id : fav.equipmentId
+              )
+              .filter(Boolean);
+            setFavoriteIds(ids);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to load favorites:", err);
+      }
+    };
+    fetchFavorites();
+  }, [user]);
+
+  const handleToggleFavorite = async (e: React.MouseEvent, equipmentId: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const token = typeof window !== "undefined" ? (localStorage.getItem("auth_token") || localStorage.getItem("token")) : null;
+    if (!token || !user) {
+      router.push(`/login?redirect=/`);
+      return;
+    }
+
+    const isFav = favoriteIds.includes(equipmentId);
+    setFavoriteIds((prev) =>
+      isFav ? prev.filter((id) => id !== equipmentId) : [...prev, equipmentId]
+    );
+
+    try {
+      const res = await fetch(`${API_URL}/favorites/${equipmentId}`, {
+        method: isFav ? "DELETE" : "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        setFavoriteIds((prev) =>
+          isFav ? [...prev, equipmentId] : prev.filter((id) => id !== equipmentId)
+        );
+      }
+    } catch (err) {
+      console.error("Toggle favorite failed:", err);
+      setFavoriteIds((prev) =>
+        isFav ? [...prev, equipmentId] : prev.filter((id) => id !== equipmentId)
+      );
+    }
+  };
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -81,44 +142,44 @@ export default function Home() {
   const categories = [
     {
       name: "Construction Equipment",
-      description: "Excavators, compaction rollers, concrete mixers, and heavy masonry tools.",
+      description: "Excavators, compaction rollers, concrete mixers, and heavy earthmoving machines.",
       icon: HardHat,
-      count: "120+ Listings",
+      count: "4 Listings",
       color: "from-amber-500/20 to-orange-500/20 text-amber-500",
     },
     {
-      name: "Photography Equipment",
-      description: "Cinema cameras, prime lenses, dynamic gimbal stabilizers, and lighting.",
-      icon: Camera,
-      count: "85+ Listings",
-      color: "from-blue-500/20 to-cyan-500/20 text-blue-500",
-    },
-    {
-      name: "Vehicles & Transportation",
-      description: "Flatbed trailers, box trucks, utility cargo vans, and heavy haulers.",
-      icon: Truck,
-      count: "60+ Listings",
-      color: "from-emerald-500/20 to-teal-500/20 text-emerald-500",
-    },
-    {
-      name: "Agriculture Equipment",
-      description: "Utility tractors, grain augers, rotary cutters, and seeders.",
-      icon: Tractor,
-      count: "45+ Listings",
-      color: "from-green-500/20 to-lime-500/20 text-green-500",
-    },
-    {
-      name: "Electronics",
-      description: "Industrial generators, commercial power stations, and diagnostic kits.",
+      name: "Power & Generators",
+      description: "Industrial diesel generators, quiet inverter units, and commercial power systems.",
       icon: Cpu,
-      count: "95+ Listings",
+      count: "4 Listings",
       color: "from-purple-500/20 to-indigo-500/20 text-purple-500",
     },
     {
-      name: "Event Equipment",
-      description: "Line-array stage audio, LED wall panels, staging trusses, and spotlights.",
-      icon: Music,
-      count: "50+ Listings",
+      name: "Material Handling",
+      description: "Counterbalance forklifts, electric pallet stackers, and rough-terrain telehandlers.",
+      icon: Truck,
+      count: "4 Listings",
+      color: "from-blue-500/20 to-cyan-500/20 text-blue-500",
+    },
+    {
+      name: "Agricultural Equipment",
+      description: "4WD farm tractors, combine harvesters, power tillers, and rotary cutters.",
+      icon: Tractor,
+      count: "4 Listings",
+      color: "from-green-500/20 to-lime-500/20 text-green-500",
+    },
+    {
+      name: "Industrial Tools",
+      description: "Concrete power saws, heavy demolition breakers, vibrators, and plate compactors.",
+      icon: Layers,
+      count: "4 Listings",
+      color: "from-emerald-500/20 to-teal-500/20 text-emerald-500",
+    },
+    {
+      name: "Lifting Equipment",
+      description: "Articulated boom lifts, slab scissor platforms, mobile cranes, and gantry hoists.",
+      icon: Tag,
+      count: "4 Listings",
       color: "from-pink-500/20 to-rose-500/20 text-pink-500",
     },
   ];
@@ -333,6 +394,10 @@ export default function Home() {
                     <img
                       src={item.image}
                       alt={item.name}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80";
+                      }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3 flex gap-2">
@@ -340,10 +405,25 @@ export default function Home() {
                         {item.category}
                       </Badge>
                     </div>
-                    <div className="absolute top-3 right-3">
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5">
                       <Badge variant={item.availableQuantity > 0 ? "success" : "danger"}>
                         {item.availableQuantity > 0 ? `${item.availableQuantity} Available` : "Out of Stock"}
                       </Badge>
+                      <button
+                        type="button"
+                        onClick={(e) => handleToggleFavorite(e, item._id)}
+                        className="w-8 h-8 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white backdrop-blur-md flex items-center justify-center transition-all shadow-md group/fav border border-white/20 active:scale-95"
+                        title={favoriteIds.includes(item._id) ? "Remove from favorites" : "Add to favorites"}
+                        aria-label="Add to favorites"
+                      >
+                        <Heart
+                          className={`w-4 h-4 transition-colors ${
+                            favoriteIds.includes(item._id)
+                              ? "fill-red-500 text-red-500"
+                              : "text-white group-hover/fav:text-red-400"
+                          }`}
+                        />
+                      </button>
                     </div>
                   </div>
 
@@ -368,7 +448,7 @@ export default function Home() {
                       <div>
                         <span className="text-xs text-slate-500 dark:text-slate-400 block">Rate ({item.rentalType})</span>
                         <span className="text-2xl font-black text-slate-900 dark:text-white">
-                          ${item.rentalPrice}
+                          ৳{item.rentalPrice?.toLocaleString()}
                           <span className="text-xs font-normal text-slate-500 dark:text-slate-400">/{item.rentalType.toLowerCase()}</span>
                         </span>
                       </div>
