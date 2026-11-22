@@ -65,6 +65,11 @@ export default function EquipmentDetailPage({ params }: { params?: { id: string 
         setErrorMsg("");
         const token = localStorage.getItem("auth_token") || localStorage.getItem("token");
 
+        if (!token) {
+          setIsLoading(false);
+          return;
+        }
+
         // Fetch equipment details (Protected route)
         const eqRes = await fetch(`${apiUrl}/api/equipment/${equipmentId}`, {
           headers: {
@@ -73,6 +78,13 @@ export default function EquipmentDetailPage({ params }: { params?: { id: string 
         });
 
         if (!eqRes.ok) {
+          if (eqRes.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("auth_token");
+            const redirectTarget = typeof window !== "undefined" ? window.location.pathname : `/equipment/${equipmentId}`;
+            window.location.href = `/login?redirect=${encodeURIComponent(redirectTarget)}`;
+            return;
+          }
           const errData = await eqRes.json().catch(() => ({}));
           throw new Error(errData.message || "Failed to load equipment details.");
         }
@@ -256,7 +268,7 @@ export default function EquipmentDetailPage({ params }: { params?: { id: string 
                         ৳{equipment.rentalPrice?.toLocaleString()}
                       </span>
                       <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                        / {equipment.rentalType.toLowerCase()}
+                        / {equipment.rentalType?.toLowerCase() || "daily"}
                       </span>
                     </div>
                   </div>
